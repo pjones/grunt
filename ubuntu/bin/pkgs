@@ -1,0 +1,55 @@
+#!/bin/sh
+################################################################################
+#
+# Read package commands from two files in the packages directory:
+#
+#  aptitude: List of aptitude commands
+#      gems: List of Ruby Gems commands
+#
+################################################################################
+APTITUDE_OPTIONS='--safe-resolver -y'
+GEM_INSTALL_OPTIONS='--no-rdoc --no-ri'
+GEM_OPTIONS=''
+
+################################################################################
+die ()
+{
+  echo "ERROR: $@"
+  exit 1
+}
+
+################################################################################
+[ `id -u` -ne 0 ] && die "please run under sudo or as root"
+[ ! -d packages ] && die "I can't see the packages directory from here: "`pwd`
+[ ! -r packages/aptitude ] && die "I can't read the aptitude file"
+[ ! -r packages/gems ] && die "I can't read the gems file"
+
+################################################################################
+apply_commands_from_file ()
+{
+  command=$1
+  suffix=''
+
+  while read line; do
+    line=`echo $line | sed -e 's|#.*$||' -e 's|^[[:space:]]+||'`
+    
+    if echo $line | grep -q '^[[:space:]]*$'; then
+      : # skip blank line
+    else
+      if echo $command | grep -q '^gem'; then
+        if echo $line  | grep -q '^install'; then
+          suffix=$GEM_INSTALL_OPTIONS
+        fi
+      fi
+
+      echo "$command $line $suffix"
+
+      eval "$command $line $suffix < /dev/null | tee -a pkgs.log" \
+        || die "failed to install package"
+    fi
+  done
+}
+
+################################################################################
+apply_commands_from_file "aptitude $APTITUDE_OPTIONS" < packages/aptitude
+apply_commands_from_file "gem $GEM_OPTIONS" < packages/gems
