@@ -2,7 +2,7 @@
 
 ################################################################################
 INSTALL_READ_ONLY = install -o root -g root -m 0444
-NTP_SRV_NAME = $(if $(wildcard /etc/init.d/openntpd),openntp,ntp)
+NTP_SRV_NAME = $(if $(wildcard /etc/init.d/openntpd),openntpd,ntp)
 
 ################################################################################
 # $1: Full path to file to install
@@ -15,9 +15,14 @@ endef
 ################################################################################
 # $1: Full path to installed configuration file
 # $2: Name of the service to restart
+#
+# That really long line below tries to find the source file:
+#  1. In the current directory
+#  2. In the ubuntu/etc directory
+#  3. In the generic/etc directory
 define SERVICE_CONF_TEMPLATE
 install: $(1)
-$(1): $(notdir $(1))
+$(1): $(if $(wildcard $(notdir $1)),$(notdir $1),$(if $(wildcard $(GRUNT_OS)/etc/$(notdir $1)),$(GRUNT_OS)/etc/$(notdir $1),$(GRUNT_HOME)/generic/etc/$(notdir $1)))
 	$(INSTALL_READ_ONLY) $$< $$@
 	/etc/init.d/$(2) restart
 endef

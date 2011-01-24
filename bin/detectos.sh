@@ -2,7 +2,7 @@
 
 uname_os=`uname -s | tr '[A-Z]' '[a-z]'`
 detected_os=$uname_os
-base=`basename $0`
+base=`dirname $0`/..
 
 if echo $uname_os | grep -q linux; then
   if [ -r /etc/issue ]; then
@@ -13,6 +13,8 @@ fi
 if [ -d $base/$detected_os ]; then
   echo $detected_os
 else
-  echo "$detected_os is not supported." > /dev/stderr
+  echo "**************************************" > /dev/stderr
+  echo " ERROR: $detected_os is not supported." > /dev/stderr
+  echo "**************************************" > /dev/stderr
   exit 1
 fi
