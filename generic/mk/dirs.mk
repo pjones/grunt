@@ -30,10 +30,7 @@ define DESCEND_INTO_DIRECTORIES
 install: grunt_directory_descender
 grunt_directory_descender:
 	@ for d in $(1); do \
-		$(MAKE) --no-print-directory -C $$$$d install \
+		$(MAKE) -C $$$$d install \
 		GRUNT_HOME=$(GRUNT_HOME) GRUNT_OS=$(GRUNT_OS) || exit 1; \
 	done
 endef
-
-################################################################################
-# $(eval $(call CREATE_ADMIN_ONLY_DIRECTORY,/opt/backup/postgresql))
