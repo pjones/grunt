@@ -26,7 +26,7 @@ $(BEANSTALKD_BIN):
 
 ################################################################################
 $(BEANMASTER_BIN): $(BEANMASTER_SRC)
-	$(INSTALL_READ_ONLY) $< $@
+	$(INSTALL_ROOT_EXEC) $< $@
 
 ################################################################################
 $(eval $(call INSTALL_ETC_FILE,/etc/monit/conf.d/beanstalkd.monit.rc,monit reload))
