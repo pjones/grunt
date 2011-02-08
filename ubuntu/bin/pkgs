@@ -58,3 +58,6 @@ apply_commands_from_file ()
 ################################################################################
 apply_commands_from_file "aptitude $APTITUDE_OPTIONS" < packages/aptitude
 apply_commands_from_file "gem $GEM_OPTIONS" < packages/gems
+
+################################################################################
+rm pkgs.log # if we didn't die
