@@ -1,0 +1,4 @@
+check process beanstalkd
+  pidfile /var/run/beanstalkd.pid
+  start "/usr/sbin/beanmaster start"
+  stop "/usr/sbin/beanmaster stop"

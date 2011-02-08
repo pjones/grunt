@@ -1,0 +1,23 @@
+#!/bin/sh
+
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
+PIDFILE=/var/run/beanstalkd.pid
+BINLOG=/var/db/beanstalkd
+
+export PATH
+
+case $1 in
+  start)
+    mkdir -p $BINLOG;
+    chown -R nobody $BINLOG
+    echo $$ > $PIDFILE;
+    exec beanstalkd -b $BINLOG -u nobody;
+    ;;
+  stop)
+    kill `cat $PIDFILE`;
+    ;;
+  *)
+    echo "Usage: beanmaster {start|stop}";
+    exit 1;
+    ;;
+esac
