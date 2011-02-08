@@ -10,6 +10,7 @@
 APTITUDE_OPTIONS='--safe-resolver -y'
 GEM_INSTALL_OPTIONS='--no-rdoc --no-ri'
 GEM_OPTIONS=''
+GEM_TEST='ruby '`dirname $0`/../../generic/bin/hasgem.rb
 
 ################################################################################
 die ()
@@ -29,6 +30,7 @@ apply_commands_from_file ()
 {
   command=$1
   suffix=''
+  preflight=''
 
   while read line; do
     line=`echo $line | sed -e 's|#.*$||' -e 's|^[[:space:]]+||'`
@@ -39,13 +41,16 @@ apply_commands_from_file ()
       if echo $command | grep -q '^gem'; then
         if echo $line  | grep -q '^install'; then
           suffix=$GEM_INSTALL_OPTIONS
+          preflight=$GEM_TEST
         fi
       fi
 
-      echo "$command $line $suffix"
+      if [ "x$preflight" = x ] || eval "$preflight $line"; then
+        echo "$command $line $suffix"
 
-      eval "$command $line $suffix < /dev/null | tee -a pkgs.log" \
-        || die "failed to install package"
+        eval "$command $line $suffix < /dev/null | tee -a pkgs.log" \
+          || die "failed to install package"
+      fi
     fi
   done
 }
