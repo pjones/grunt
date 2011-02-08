@@ -3,6 +3,7 @@
 ################################################################################
 INSTALL_READ_ONLY = install -o root -g root -m 0444
 INSTALL_ROOT_ONLY = install -o root -g root -m 0400
+INSTALL_ROOT_EXEC = install -o root -g root -m 0555
 NTP_SRV_NAME = $(if $(wildcard /etc/init.d/openntpd),openntpd,ntp)
 
 ################################################################################
