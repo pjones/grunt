@@ -1,7 +1,8 @@
 # -*- mode: makefile-gmake -*-
 
 ################################################################################
-GRUNT_OS = $(GRUNT_HOME)/$(shell sh $(GRUNT_HOME)/bin/detectos.sh)
+.PHONY: install
 
 ################################################################################
-include $(GRUNT_HOME)/generic/mk/init.mk
+include $(GRUNT_HOME)/generic/mk/dirs.mk
+include $(GRUNT_HOME)/generic/mk/files.mk
