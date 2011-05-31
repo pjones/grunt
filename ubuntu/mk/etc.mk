@@ -30,11 +30,18 @@ install: /etc/sv/$(1)/run
 	sv restart $(1)
 endef
 
+################################################################################
+# Install a /etc/hostname file
+define GRUNT_UBUNTU_HOSTNAME
+install: /etc/hostname
+/etc/hostname: hostname
+	$(GRUNT_INSTALL_READ_ONLY) $$< $$@
+	hostname --file $$@
+endef
 
 ################################################################################
 # Install some actual files.
+$(eval $(if $(wildcard hostname),$(call GRUNT_UBUNTU_HOSTNAME),))
 $(eval $(call SERVICE_CONF_TEMPLATE,/etc/ntp.conf,$(NTP_SRV_NAME)))
 $(eval $(call SERVICE_CONF_TEMPLATE,/etc/ssh/sshd_config,ssh))
 $(eval $(if $(wildcard interfaces),$(call SERVICE_CONF_TEMPLATE,/etc/network/interfaces,networking),))
-
-
