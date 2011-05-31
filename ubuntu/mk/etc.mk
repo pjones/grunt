@@ -29,3 +29,12 @@ install: /etc/sv/$(1)/run
 	install -o root -g root -m 0555 $$< $$@
 	sv restart $(1)
 endef
+
+
+################################################################################
+# Install some actual files.
+$(eval $(call SERVICE_CONF_TEMPLATE,/etc/ntp.conf,$(NTP_SRV_NAME)))
+$(eval $(call SERVICE_CONF_TEMPLATE,/etc/ssh/sshd_config,ssh))
+$(eval $(if $(wildcard interfaces),$(call SERVICE_CONF_TEMPLATE,/etc/network/interfaces,networking),))
+
+

@@ -45,7 +45,7 @@ apply_commands_from_file ()
         fi
       fi
 
-      if [ "x$preflight" = x ] || eval "$preflight $line"; then
+      if [ "x$preflight" = x ] || ! eval "$preflight $line"; then
         echo "$command $line $suffix"
 
         eval "$command $line $suffix < /dev/null | tee -a pkgs.log" \
