@@ -12,10 +12,12 @@ OptionParser.new do |parser|
 end.permute!(ARGV)
 
 gem_name = ARGV.shift
+gem_name = ARGV.shift if gem_name == 'install' and !ARGV.size.zero?
 
 gem_load ||=
   case gem_name
-  when 'rails' then 'rails/version'
+  when 'rails'        then 'rails/version'
+  when 'rb-appscript' then 'appscript'
   else gem_name
   end
 
@@ -26,5 +28,7 @@ begin
   gem(*gem_args)
   require(gem_load)
 rescue Gem::LoadError => e
+  exit(1)
+rescue LoadError => e
   exit(1)
 end

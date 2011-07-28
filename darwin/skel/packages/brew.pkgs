@@ -1,0 +1,7 @@
+update
+install git
+install zsh
+install tmux
+install gnupg
+install aspell --lang=en.it
+install pwgen

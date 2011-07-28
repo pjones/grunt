@@ -10,7 +10,7 @@
 APTITUDE_OPTIONS='--safe-resolver -y'
 GEM_INSTALL_OPTIONS='--no-rdoc --no-ri'
 GEM_OPTIONS=''
-GEM_TEST='ruby '`dirname $0`/../../generic/bin/hasgem.rb
+GEM_TEST='ruby '`dirname $0`/hasgem.rb
 
 ################################################################################
 die ()
@@ -21,9 +21,42 @@ die ()
 
 ################################################################################
 [ `id -u` -ne 0 ] && die "please run under sudo or as root"
-[ ! -d packages ] && die "I can't see the packages directory from here: "`pwd`
-[ ! -r packages/aptitude ] && die "I can't read the aptitude file"
-[ ! -r packages/gems ] && die "I can't read the gems file"
+
+################################################################################
+preflight_for () {
+  command=$1
+  line=$2
+  package=`echo $line|sed 's/^install *//'`
+  preflight=''
+
+  case $command in
+    brew*)
+      (echo $line | grep -q '^install') && \
+        preflight="test '`brew which $package`'"
+      ;;
+    gem*)
+      (echo $line | grep -q '^install') && \
+        preflight="$GEM_TEST $line"
+  esac
+  
+  echo $preflight
+}
+
+################################################################################
+suffix_for () {
+  command=$1
+  line=$2
+  suffix=''
+  
+  case $command in
+    gem*)
+      (echo $line | grep -q '^install') && \
+        suffix=$GEM_INSTALL_OPTIONS
+      ;;
+  esac
+  
+  echo $suffix
+}
 
 ################################################################################
 apply_commands_from_file ()
@@ -38,14 +71,10 @@ apply_commands_from_file ()
     if echo $line | grep -q '^[[:space:]]*$'; then
       : # skip blank line
     else
-      if echo $command | grep -q '^gem'; then
-        if echo $line  | grep -q '^install'; then
-          suffix=$GEM_INSTALL_OPTIONS
-          preflight=$GEM_TEST
-        fi
-      fi
+      preflight=`preflight_for "$command" "$line"`
+      suffix=`suffix_for "$command" "$line"`
 
-      if [ "x$preflight" = x ] || ! eval "$preflight $line"; then
+      if [ "x$preflight" = x ] || ! eval $preflight; then
         echo "$command $line $suffix"
 
         eval "$command $line $suffix < /dev/null | tee -a pkgs.log" \
@@ -56,8 +85,24 @@ apply_commands_from_file ()
 }
 
 ################################################################################
-apply_commands_from_file "aptitude $APTITUDE_OPTIONS" < packages/aptitude
-apply_commands_from_file "gem $GEM_OPTIONS" < packages/gems
+case `basename $1` in
+  aptitude.pkgs)
+    apply_commands_from_file "aptitude $APTITUDE_OPTIONS" < $1
+    ;;
+  
+  gem.pkgs)
+    apply_commands_from_file "gem $GEM_OPTIONS" < $1
+    ;;
+  
+  brew.pkgs)
+    apply_commands_from_file "brew" < $1
+    ;;
+  
+  *)
+    echo "ERROR: I don't know which command to use for $1"
+    exit 1
+    ;;
+esac
 
 ################################################################################
-rm pkgs.log # if we didn't die
+rm -f pkgs.log # if we didn't die
