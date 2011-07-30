@@ -1,0 +1,44 @@
+############################################################################
+#
+# This file should contain hashes whose keys are launchd labels and
+# whose values are a hash that contains keys that will be turned into
+# launchd configuration options.  You should review the man page for
+# launchd.plist since it contains a list of all possible configuration
+# options for a launchd daemon or agent.
+#
+# This file is preprocessed by ERB.
+#
+# Mandatory keys for each agent/daemon:
+#
+#   Type: Must be either Agent or Daemon.  Used to tell ymlaunch where
+#         to place the generated plist file.  This key will not be
+#         translated into the plist file.
+#
+#  UserName: Used by ymlaunch when Type is Agent to know which user's
+#            launch agents directory to place plist files into.
+#
+############################################################################
+
+
+############################################################################
+# Before changing the name of a launchd label or removing an entry
+# from this file you will need to unload the generated plist file and
+# then remove it from the file system.  You can also use the --remove
+# option to ymlaunch.
+"com.pmade.cleanUpDownloads":
+  Disabled: true # This example job is disabled by default
+  Type: Agent # this is a non-standard key for ymlaunch
+  UserName: <%= ENV['SUDO_USER'] || ENV['USER'] %>
+  WorkingDirectory: <%= ENV['HOME'] %>
+  LowPriorityIO: true
+  ProgramArguments:
+    - "find"
+    - "Downloads"
+    - "-type"
+    - "f"
+    - "-mtime"
+    - "+30"
+    - "-delete"
+  StartCalendarInterval:
+    Hour: 3
+    Minute: 15
