@@ -109,6 +109,7 @@ class Command
     :xml    => false,   
     :load   => false,   
     :remove => false, 
+    :debug  => nil,
   }
   
   ##############################################################################
@@ -125,6 +126,7 @@ class Command
       p.on('--xml', 'Dump XML to STDOUT') {|x| options.xml = x}
       p.on('--load', 'Load plist files into launchd') {|l| options.load = l}
       p.on('--remove', 'Unload and remove plist files') {|r| options.remove = r}
+      p.on('--debug=DIR', 'Enable job debugging, place files in DIR') {|d| options.debug = d}
     end.permute!(arguments)
     
     if arguments.size != 1 or !File.exist?(arguments.first)
@@ -132,6 +134,19 @@ class Command
     end
     
     load_yaml_file(arguments.first)
+    
+    if options.debug
+      if !File.exist?(options.debug)
+        raise("debug directory #{options.debug} doesn't exist")
+      end
+
+      @jobs.each do |job|
+        file = File.expand_path(File.join(options.debug, "#{job.label}.debug"))
+        job.attributes['StandardOutPath']   = file
+        job.attributes['StandardErrorPath'] = file
+        job.attributes['Debug']             = true
+      end
+    end
   end
   
   ##############################################################################
