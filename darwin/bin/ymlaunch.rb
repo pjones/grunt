@@ -5,6 +5,7 @@ require('yaml')
 require('erb')
 require('ostruct')
 require('optparse')
+require('fileutils')
 require('rexml/document')
 
 ################################################################################
@@ -36,10 +37,15 @@ class Job
   end
   
   ##############################################################################
+  def user
+    @attributes['UserName']
+  end
+  
+  ##############################################################################
   def valid?
     @errors.clear
     @errors << "type must be one of #{TYPES.join(', ')}" unless TYPES.include?(@type)
-    @errors << "missing UserName key" if @type == 'Agent' and !@attributes.has_key?('UserName')
+    @errors << "missing UserName key" if @type == 'Agent' and user.nil?
     @errors.empty?
   end
   
@@ -48,7 +54,7 @@ class Job
     dir = 
       case @type
       when 'Agent'
-        File.expand_path("~#{@attributes['UserName']}/Library/LaunchAgents")
+        File.expand_path("~#{user}/Library/LaunchAgents")
       when 'Daemon'
         '/Library/LaunchDaemons'
       else
@@ -99,8 +105,10 @@ class Command
   
   ##############################################################################
   DEFAULT_OPTIONS = {
-    :list => false,
-    :xml  => false,
+    :list   => false,   
+    :xml    => false,   
+    :load   => false,   
+    :remove => false, 
   }
   
   ##############################################################################
@@ -115,6 +123,8 @@ class Command
       p.on('-h', '--help', 'This message') {$stdout.puts(p); exit}
       p.on('--list', 'List files that will be generated') {|l| options.list = l}
       p.on('--xml', 'Dump XML to STDOUT') {|x| options.xml = x}
+      p.on('--load', 'Load plist files into launchd') {|l| options.load = l}
+      p.on('--remove', 'Unload and remove plist files') {|r| options.remove = r}
     end.permute!(arguments)
     
     if arguments.size != 1 or !File.exist?(arguments.first)
@@ -130,6 +140,21 @@ class Command
       $stdout.puts(@jobs.map {|j| j.path}.join("\n"))
     elsif options.xml
       @jobs.each {|j| j.xml.write($stdout)}
+    elsif options.load
+      @jobs.each do |job|
+        FileUtils.mkdir_p(File.dirname(job.path))
+        File.open(job.path, 'w') {|f| job.xml.write(f)}
+        FileUtils.chmod(0600, job.path)
+        FileUtils.chown(job.user, nil, job.path) if job.user
+        system('launchctl', 'load', job.path)
+      end
+    elsif options.remove
+      @jobs.each do |job|
+        if File.exist?(job.path)
+          system('launchctl', 'unload', job.path)
+          File.unlink(job.path)
+        end
+      end
     else
       raise("try using --help")
     end
