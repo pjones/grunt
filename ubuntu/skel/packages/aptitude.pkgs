@@ -1,0 +1,16 @@
+# Ubuntu Packages
+update
+install gcc
+install g++
+install zsh
+install rsync
+install ruby1.8-dev
+install irb
+install libopenssl-ruby1.8
+install rubygems1.8
+install libxml2-utils
+install xsltproc
+install git-core
+install openntpd
+install libevent-dev
+install monit

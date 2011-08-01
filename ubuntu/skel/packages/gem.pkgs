@@ -1,0 +1,16 @@
+# Ruby Gems
+install rails --version=1.2.6
+install rails --version=2.0.5
+install rails --version=2.2.3
+install rails --version=3.0.9
+install fastercsv
+install highline
+install money
+install money --version=1.7.1
+install rdiscount
+install RedCloth
+install tzinfo
+install vlad
+install vlad-git
+install hoe
+install beanstalk-client
