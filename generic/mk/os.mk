@@ -1,5 +1,4 @@
 # -*- mode: makefile-gmake -*-
 
 ################################################################################
-include $(GRUNT_HOME)/generic/mk/os.mk
-include $(GRUNT_HOME)/generic/mk/init.mk
+GRUNT_OS = $(GRUNT_HOME)/$(shell sh $(GRUNT_HOME)/bin/detectos.sh)
