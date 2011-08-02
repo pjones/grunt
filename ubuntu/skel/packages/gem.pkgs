@@ -14,3 +14,4 @@ install vlad
 install vlad-git
 install hoe
 install beanstalk-client
+install mocha
