@@ -1,2 +1,2 @@
 ################################################################################
-include $(GRUNT_OS)/mk/etc.mk
+include $(GRUNT_HOME)/darwin/mk/etc.mk
