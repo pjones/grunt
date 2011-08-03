@@ -10,6 +10,11 @@ GRUNT_INSTALL_ROOT_EXEC = install -o $(GRUNT_ROOT_USER) -g $(GRUNT_ROOT_GROUP) -
 ################################################################################
 # $1 What directories to look in (e.g. 'etc' for all etc directories)
 # $2 The base name of the file.
+#
+# That really long line below tries to find the source file:
+#  1. In the current directory
+#  2. In the <os>/$1 directory
+#  3. In the generic/$1 directory
 define GRUNT_FIND_SOURCE_FILE
 $(if $(wildcard $(2)),$(2),$(if $(wildcard $(GRUNT_OS)/$(1)/$(2)),$(GRUNT_OS)/$(1)/$(2),$(GRUNT_HOME)/generic/$(1)/$(2)))
 endef
