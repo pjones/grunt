@@ -20,7 +20,7 @@ die ()
 }
 
 ################################################################################
-[ `id -u` -ne 0 ] && die "please run under sudo or as root"
+[ `id -u` -ne 0 -a x$RERUN_PKG_TOOL = x ] && die "please run under sudo or as root"
 
 ################################################################################
 preflight_for () {
@@ -95,7 +95,13 @@ case `basename $1` in
     ;;
   
   brew.pkgs)
-    apply_commands_from_file "brew" < $1
+    # Can't run brew as root
+    if [ x$SUDO_USER != x -a x$RERUN_PKG_TOOL = x ]; then
+      export RERUN_PKG_TOOL=yes
+      su -m $SUDO_USER -c "$0 $1"
+    else
+      apply_commands_from_file "brew" < $1
+    fi
     ;;
   
   *)
