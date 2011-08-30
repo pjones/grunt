@@ -26,6 +26,7 @@ class Job
   attr_reader(:label)
   attr_reader(:attributes)
   attr_reader(:errors)
+  attr_reader(:type)
   
   ##############################################################################
   def initialize (label, attributes)
@@ -161,12 +162,12 @@ class Command
         File.open(job.path, 'w') {|f| job.xml.write(f)}
         FileUtils.chmod(0600, job.path)
         FileUtils.chown(job.user, nil, job.path) if job.user
-        system('launchctl', 'load', job.path)
+        launchctl('load', job)
       end
     elsif options.remove
       @jobs.each do |job|
         if File.exist?(job.path)
-          system('launchctl', 'unload', job.path)
+          launchctl('unload', job)
           File.unlink(job.path)
         end
       end
@@ -196,6 +197,20 @@ class Command
       
       raise("invalid daemons or agents")
     end
+  end
+  
+  ##############################################################################
+  def launchctl (command, job)
+    cmd = []
+
+    if job.type == 'Agent' and !ENV['SUDO_USER'].nil?
+      cmd << 'su' << '-m' << ENV['SUDO_USER'] << '-c'
+      cmd << "launchctl #{command} #{job.path}"
+    else
+      cmd << 'launchctl' << command << job.path
+    end
+    
+    system(*cmd) || raise("launchctl failed: #{cmd.join(' ')}")
   end
 end
 
