@@ -23,6 +23,15 @@ class Job
   ]
   
   ##############################################################################
+  CALENDAR_INTERVAL_VALUES = {
+    'Minute'  => (0..60),
+    'Hour'    => (0..23),
+    'Day'     => (0..31),
+    'Weekday' => (0..6),
+    'Month'   => (1..12),
+  }
+  
+  ##############################################################################
   attr_reader(:label)
   attr_reader(:attributes)
   attr_reader(:errors)
@@ -35,6 +44,7 @@ class Job
     @type = attributes.delete('Type')
     @attributes['Label'] = @label
     @errors = []
+    split_start_calendar_interval if @attributes['StartCalendarInterval']
   end
   
   ##############################################################################
@@ -76,6 +86,70 @@ class Job
   
   ##############################################################################
   private
+  
+  ##############################################################################
+  def split_start_calendar_interval
+    process_fields = {}
+    
+    CALENDAR_INTERVAL_VALUES.keys.each do |field|
+      next unless @attributes['StartCalendarInterval'].has_key?(field)
+      next unless @attributes['StartCalendarInterval'][field].to_s.match(/[,\/-]/)
+      process_fields[field] = @attributes['StartCalendarInterval'][field]
+    end
+    
+    return if process_fields.empty?
+    
+    calendar_intervals = []
+    base_record = @attributes['StartCalendarInterval'].dup
+
+    process_fields.keys.each do |field|
+      process_fields[field] = expand_calendar_interval(field, base_record[field])
+      base_record.delete(field)
+    end
+    
+    @attributes['StartCalendarInterval'] =
+      build_calendar_interval([base_record], process_fields)
+  end
+  
+  ##############################################################################
+  def build_calendar_interval (base, fields)
+    key   = fields.keys.first
+    range = fields.delete(key)
+    sets  = range.inject([]) {|a, r| a << base.map {|b| b.dup}}
+    
+    sets.each_with_index do |set, i|
+      set.each {|s| s[key] = range[i]}
+    end
+    
+    sets.flatten!
+    fields.empty? ? sets : build_calendar_interval(sets, fields)
+  end
+  
+  ##############################################################################
+  def expand_calendar_interval (field, value)
+    if value.match(/,/)
+      return value.split(/\s*,\s*/).map do |p| 
+        expand_calendar_interval(field, p)
+      end.flatten.sort
+    end
+    
+    range, divisor = value.split(/\//, 2)
+    
+    if range.match(/-/)
+      parts = range.split(/-/, 2).map {|p| p.to_i}
+      range = (parts[0]..parts[1])
+    end
+    
+    range = CALENDAR_INTERVAL_VALUES[field] if range == '*'
+    
+    if divisor and range.is_a?(Range)
+      range.step(divisor.to_i).to_a
+    elsif range.is_a?(Range)
+      range.to_a
+    else
+      [range.to_i]
+    end
+  end
   
   ##############################################################################
   def write_value (parent, value)
@@ -155,7 +229,7 @@ class Command
     if options.list
       $stdout.puts(@jobs.map {|j| j.path}.join("\n"))
     elsif options.xml
-      @jobs.each {|j| j.xml.write($stdout)}
+      @jobs.each {|j| j.xml.write($stdout); $stdout.puts}
     elsif options.load
       @jobs.each do |job|
         FileUtils.mkdir_p(File.dirname(job.path))
