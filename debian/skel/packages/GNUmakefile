@@ -1,4 +1,2 @@
-# -*- mode: makefile-gmake -*-
-
 ################################################################################
-include $(GRUNT_HOME)/debian/mk/etc.mk
+include $(GRUNT_HOME)/generic/mk/pkgs.mk

@@ -1,0 +1,7 @@
+# Ruby Gems
+install highline
+install money
+install rdiscount
+install mocha
+install nokogiri
+install patron
