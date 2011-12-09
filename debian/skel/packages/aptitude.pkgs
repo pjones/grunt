@@ -2,6 +2,7 @@
 # update
 install sudo
 install zsh
+install tmux
 install rsync
 install ruby1.9.1-full # Ruby 1.9.3
 install libxml2-utils
