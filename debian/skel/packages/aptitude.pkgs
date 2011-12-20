@@ -4,12 +4,13 @@ install sudo
 install zsh
 install tmux
 install rsync
-install ruby1.9.1-full # Ruby 1.9.3
+install ruby-full
+install rubygems
 install libxml2-utils
 install libxml2-dev
 install xsltproc
 install libxslt1-dev
 install git
-install openntpd
+install ntp # openntpd
 install curl
 install libcurl4-openssl-dev
