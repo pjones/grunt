@@ -1,3 +1,8 @@
+# -*- mode: makefile-gmake -*-
+
+################################################################################
+include $(GRUNT_HOME)/generic/mk/init.mk
+
 ################################################################################
 GRUNT_PKG_FILES = $(wildcard *.pkgs)
 GRUNT_PKG_TOUCH_DIR ?= /etc
