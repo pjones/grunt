@@ -1,6 +1,6 @@
 ################################################################################
 GRUNT_HOME = $(CURDIR)/grunt
-include $(GRUNT_HOME)/generic/mk/boot.mk
+include $(GRUNT_HOME)/generic/mk/init.mk
 
 ################################################################################
 DIRS  = $(if $(wildcard packages),packages,)
