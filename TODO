@@ -1,0 +1,6 @@
+# -*- mode: org -*-
+#+title: Grunt To-do List
+#+startup: content
+
+* Generic
+** TODO Use VPATH instead of GRUNT_FIND_SOURCE_FILE

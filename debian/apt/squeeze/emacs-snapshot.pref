@@ -1,0 +1,4 @@
+# Emacs
+Package: emacs-snapshot
+Pin: origin "emacs.naquadah.org"
+Pin-Priority: 700

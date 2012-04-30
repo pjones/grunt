@@ -1,0 +1,4 @@
+# Bump mozilla up a bit
+Package: *
+Pin: origin "mozilla.debian.net"
+Pin-Priority: 600

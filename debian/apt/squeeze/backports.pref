@@ -1,0 +1,9 @@
+# Prefer backports
+Package: *
+Pin: release a=squeeze-backports
+Pin-Priority: 600
+
+# Then stable
+Package: *
+Pin: release a=stable
+Pin-Priority: 500

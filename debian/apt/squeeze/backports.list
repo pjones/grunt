@@ -1,0 +1,2 @@
+# Squeeze-backports (use apt-get install -t squeeze-backports foo)
+deb http://backports.debian.org/debian-backports squeeze-backports main

@@ -1,0 +1,3 @@
+# Conkeror nightly builds: http://noone.org/conkeror-nightly-debs/
+deb http://noone.org/conkeror-nightly-debs squeeze main
+deb-src http://noone.org/conkeror-nightly-debs squeeze main

@@ -1,0 +1,2 @@
+# Bitlbee Dev: http://code.bitlbee.org/debian/
+deb http://code.bitlbee.org/debian/devel/squeeze/amd64/ ./

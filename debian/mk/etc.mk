@@ -4,6 +4,9 @@
 include $(GRUNT_HOME)/generic/mk/init.mk
 
 ################################################################################
+VPATH = $(GRUNT_HOME)/generic/etc
+
+################################################################################
 GRUNT_NTP_SRV_NAME  = $(if $(wildcard /etc/init.d/openntpd),openntpd,ntp)
 
 ################################################################################
@@ -11,19 +14,10 @@ GRUNT_NTP_SRV_NAME  = $(if $(wildcard /etc/init.d/openntpd),openntpd,ntp)
 # $2: Name of the service to restart
 define GRUNT_SERVICE_CONF_TEMPLATE
 install: $(1)
-$(1): $(call GRUNT_FIND_SOURCE_FILE,etc,$(notdir $(1)))
+$(1): $(notdir $(1))
 	$(GRUNT_INSTALL_READ_ONLY) $$< $$@
 	-service $(2) stop > /dev/null 2>&1
 	service $(2) start
-endef
-
-################################################################################
-# $1: The name of a directory in /etc/sv with a matching .sh file in this dir
-define SV_GRUNT_SERVICE_CONF_TEMPLATE
-install: /etc/sv/$(1)/run
-/etc/sv/$(1)/run: $(1).sh
-	install -o root -g root -m 0555 $$< $$@
-	sv restart $(1)
 endef
 
 ################################################################################
@@ -36,8 +30,29 @@ install: /etc/hostname
 endef
 
 ################################################################################
-# Install some actual files.
+# TODO: What is this for?
+# $1: The name of a directory in /etc/sv with a matching .sh file in this dir
+define SV_GRUNT_SERVICE_CONF_TEMPLATE
+install: /etc/sv/$(1)/run
+/etc/sv/$(1)/run: $(1).sh
+	install -o root -g root -m 0555 $$< $$@
+	sv restart $(1)
+endef
+
+################################################################################
+# Files to install.
+
+# File: default.keyboard  Destination: /etc/default/keyboard
+$(eval $(if $(wildcard default.keyboard),$(call GRUNT_INSTALL_PLAIN_FILE,/etc/default/keyboard,default.keyboard)))
+
+# File: hostname  Destination: /etc/hostname  Extra: Call hostname(1)
 $(eval $(if $(wildcard hostname),$(call GRUNT_DEBIAN_HOSTNAME),))
-$(eval $(if $(wildcard hosts),$(call GRUNT_INSTALL_ETC_FILE,/etc/hosts),))
-$(eval $(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/ssh/sshd_config,ssh))
+
+# File: hosts  Destination: /etc/hosts
+$(eval $(if $(wildcard hosts),$(call GRUNT_INSTALL_PLAIN_FILE,/etc/hosts),))
+
+# File: interfaces  Destination: /etc/network/interfaces  Extra: restart networking
 $(eval $(if $(wildcard interfaces),$(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/network/interfaces,networking),))
+
+# File: sshd_config  Destination: /etc/ssh/sshd_config  Extra: restart sshd
+$(eval $(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/ssh/sshd_config,ssh))

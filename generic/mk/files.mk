@@ -8,6 +8,19 @@ GRUNT_INSTALL_ROOT_ONLY = install -o $(GRUNT_ROOT_USER) -g $(GRUNT_ROOT_GROUP) -
 GRUNT_INSTALL_ROOT_EXEC = install -o $(GRUNT_ROOT_USER) -g $(GRUNT_ROOT_GROUP) -m 0755
 
 ################################################################################
+# $1: Full path to the target file
+# $2: Local file name (optional, defaults to $(notdir $(2)))
+# $3: Optional command to run after the install
+define GRUNT_INSTALL_PLAIN_FILE
+install: $(1)
+$(1): $(if $(2),$(2),$(notdir $(1)))
+	$(GRUNT_INSTALL_READ_ONLY) $$< $$@
+	$(if $(3),$(3),)
+endef
+
+################################################################################
+# DEPRECATED: please use VPATH instead.
+#
 # $1 What directories to look in (e.g. 'etc' for all etc directories)
 # $2 The base name of the file.
 #
@@ -20,6 +33,8 @@ $(if $(wildcard $(2)),$(2),$(if $(wildcard $(GRUNT_OS)/$(1)/$(2)),$(GRUNT_OS)/$(
 endef
 
 ################################################################################
+# DEPRECATED: please use VPATH with GRUNT_INSTALL_PLAIN_FILE instead.
+#
 # $1: Full path to file to install
 # $2: Optional command to run after the install
 define GRUNT_INSTALL_ETC_FILE
@@ -30,6 +45,8 @@ $(1): $(call GRUNT_FIND_SOURCE_FILE,etc,$(notdir $(1)))
 endef
 
 ################################################################################
+# DEPRECATED: please use VPATH instead.
+#
 # $1: Full path to the file to install
 # $2: Optional command to run after the install
 define GRUNT_INSTALL_PRIVATE_ETC_FILE

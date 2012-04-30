@@ -1,0 +1,4 @@
+# Bitlbee
+Package: bitlbee
+Pin: origin "code.bitlbee.org"
+Pin-Priority: 700

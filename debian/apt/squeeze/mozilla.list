@@ -1,0 +1,2 @@
+# Debian Mozilla group (for Iceweasel/Firefox)
+deb http://mozilla.debian.net/ squeeze-backports iceweasel-release

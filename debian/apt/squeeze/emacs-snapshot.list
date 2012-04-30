@@ -1,0 +1,3 @@
+# Emacs-snapshot
+deb http://emacs.naquadah.org/ stable/
+deb-src http://emacs.naquadah.org/ stable/

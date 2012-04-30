@@ -16,4 +16,4 @@ $(GRUNT_CRON_SPOOL)/$(basename $(1)): $(1)
 endef
 
 ################################################################################
-$(eval $(foreach f,$(GRUNT_CRONT_TAB_FILES),$(call GRUNT_INSTALL_CRON_TAB_FILE,$(f))))
+$(foreach f,$(GRUNT_CRONT_TAB_FILES),$(eval $(call GRUNT_INSTALL_CRON_TAB_FILE,$(f))))
