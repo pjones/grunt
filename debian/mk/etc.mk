@@ -52,7 +52,11 @@ $(eval $(if $(wildcard hostname),$(call GRUNT_DEBIAN_HOSTNAME),))
 $(eval $(if $(wildcard hosts),$(call GRUNT_INSTALL_PLAIN_FILE,/etc/hosts),))
 
 # File: interfaces  Destination: /etc/network/interfaces  Extra: restart networking
-$(eval $(if $(wildcard interfaces),$(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/network/interfaces,networking),))
+ifeq ($(GRUNT_DEBIAN_RESTART_NETWORK),YES)
+  $(eval $(if $(wildcard interfaces),$(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/network/interfaces,networking),))
+else
+  $(eval $(if $(wildcard interfaces),$(call GRUNT_INSTALL_PLAIN_FILE,/etc/network/interfaces)))
+endif
 
 # File: sshd_config  Destination: /etc/ssh/sshd_config  Extra: restart sshd
 $(eval $(call GRUNT_SERVICE_CONF_TEMPLATE,/etc/ssh/sshd_config,ssh))
