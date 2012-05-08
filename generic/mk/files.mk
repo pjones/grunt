@@ -19,6 +19,18 @@ $(1): $(if $(2),$(2),$(notdir $(1)))
 endef
 
 ################################################################################
+# $1: Full path to the target file
+# $2: Local file name (optional, defaults to $(notdir $(2)))
+# $3: Optional command to run after the install
+define GRUNT_INSTALL_ROOT_BIN_FILE
+install: $(1)
+$(1): $(if $(2),$(2),$(notdir $(1)))
+	$(GRUNT_INSTALL_ROOT_EXEC) $$< $$@
+	$(if $(3),$(3),)
+endef
+
+
+################################################################################
 # DEPRECATED: please use VPATH instead.
 #
 # $1 What directories to look in (e.g. 'etc' for all etc directories)
