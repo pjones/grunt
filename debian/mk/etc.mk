@@ -42,6 +42,9 @@ endef
 ################################################################################
 # Files to install.
 
+# File: rc.local Destination: /etc/rc.local
+$(eval $(if $(wildcard rc.local),$(call GRUNT_INSTALL_ROOT_BIN_FILE,/etc/rc.local)))
+
 # File: default.keyboard  Destination: /etc/default/keyboard
 $(eval $(if $(wildcard default.keyboard),$(call GRUNT_INSTALL_PLAIN_FILE,/etc/default/keyboard,default.keyboard)))
 
