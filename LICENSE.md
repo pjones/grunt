@@ -1,3 +1,5 @@
+# Grunt License
+
 Copyright (C) 2009-2012 pmade inc. (Peter Jones pjones@pmade.com)
 
 Permission is hereby granted, free of charge, to any person obtaining
