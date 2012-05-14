@@ -1,8 +1,0 @@
-* Later
-  - [ ] Caching bind (local DNS server)
-* Bug Fixes
-  - [ ] No base postfix configuration
-  - [ ] No admin group
-  - [ ] Add admin group to the sudoers file
-  - [ ] Apt source list very small
-  - [ ] Need to install ufw
