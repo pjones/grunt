@@ -25,10 +25,9 @@ $(GRUNT_APT_PREF_DIR)/$(1).pref: $(1).pref
 endef
 
 ################################################################################
-GRUNT_APT_LIST_FILES = $(patsubst,%.list,,$(wildcard *.list))
+# Automatically install any *.list files with their *.pref files.
+GRUNT_APT_LIST_FILES ?= $(subst .list,,$(wildcard *.list))
 $(foreach l,$(GRUNT_APT_LIST_FILES),$(eval $(call GRUNT_INSTALL_APT_FILE,$(l))))
-
-################################################################################
 
 ################################################################################
 # List the basenames of extra APT files to install.  For example:
