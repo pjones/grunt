@@ -14,3 +14,4 @@ install git
 install ntp # openntpd
 install curl
 install libcurl4-openssl-dev
+install build-essential
