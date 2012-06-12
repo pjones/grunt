@@ -36,7 +36,7 @@ dir=`basename $tarball .tar.gz`
 cd /tmp
 [ -d $dir ] && die "$dir already exists in /tmp"
 
-if [ ! -r $tarball]; then
+if [ ! -r $tarball ]; then
   curl -o $tarball $ruby_url || die "can't download Ruby"
   [ -r $tarball ]            || die "missing file after download"
 fi
