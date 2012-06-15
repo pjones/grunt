@@ -51,6 +51,9 @@ make                      || die "make failed"
 make install              || die "make install failed"
 
 ################################################################################
+(cd ext/readline && ruby extconf.rb && make && make install)
+
+################################################################################
 cd ..
 rm -r $dir $tarball
 exit 0
