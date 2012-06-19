@@ -32,6 +32,10 @@ preflight_check () {
     return 0
   fi
 
+  if [ "$FORCE_PKG_INSTALL" = YES ]; then
+    return 0
+  fi
+
   case $command in
     aptitude*)
       if dpkg-query -s $package 2>&1 | egrep -q 'Status:[[:space:]]*install'; then
@@ -49,7 +53,7 @@ preflight_check () {
       fi
       ;;
   esac
-  
+
   # Fall though: we don't know how to check to see if this package is
   # installed so just say that it isn't.
   return 0
@@ -60,14 +64,14 @@ suffix_for () {
   command=$1
   line=$2
   suffix=''
-  
+
   case $command in
     gem*)
       (echo $line | grep -q '^install') && \
         suffix=$GEM_INSTALL_OPTIONS
       ;;
   esac
-  
+
   echo $suffix
 }
 
@@ -78,7 +82,7 @@ apply_commands_from_file () {
 
   while read line; do
     line=`echo $line | sed -e 's|#.*$||' -e 's|^[[:space:]]+||'`
-    
+
     if echo $line | grep -vq '^[[:space:]]*$'; then
       if preflight_check "$command" "$line"; then
         suffix=`suffix_for "$command" "$line"`
@@ -95,11 +99,11 @@ case `basename $1` in
   aptitude.pkgs)
     apply_commands_from_file "aptitude $APTITUDE_OPTIONS" < $1
     ;;
-  
+
   gem.pkgs)
     apply_commands_from_file "gem $GEM_OPTIONS" < $1
     ;;
-  
+
   brew.pkgs)
     # Can't run brew as root
     if [ x$SUDO_USER != x -a x$RERUN_PKG_TOOL = x ]; then
@@ -109,7 +113,7 @@ case `basename $1` in
       apply_commands_from_file "brew" < $1
     fi
     ;;
-  
+
   *)
     echo "ERROR: I don't know which command to use for $1"
     exit 1
