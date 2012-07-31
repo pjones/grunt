@@ -17,6 +17,9 @@ include $(GRUNT_HOME)/generic/mk/dirs.mk
 include $(GRUNT_HOME)/generic/mk/files.mk
 
 ################################################################################
+export GRUNT_LIB = $(GRUNT_HOME)/generic/lib
+
+################################################################################
 GRUNT_INIT_DONE = YES
 
 endif
