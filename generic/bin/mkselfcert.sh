@@ -4,6 +4,8 @@
 #
 # A script to make a self signed certificate.
 #
+# Taken from: https://devcenter.heroku.com/articles/ssl-certificate-self
+#
 ################################################################################
 
 DEST=tempcert
