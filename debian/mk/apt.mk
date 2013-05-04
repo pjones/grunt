@@ -19,6 +19,7 @@ install: $(GRUNT_APT_LIST_DIR)/$(1).list $(GRUNT_APT_PREF_DIR)/$(1).pref
 $(GRUNT_APT_LIST_DIR)/$(1).list: $(1).list
 	$(GRUNT_INSTALL_READ_ONLY) $$< $$@
 	$$(if $$(wildcard $$(patsubst %.list,%.gpg,$$<)),apt-key add $$(patsubst %.list,%.gpg,$$<) > /dev/null)
+	$$(if $$(wildcard $$(patsubst %.list,%.gpg.url,$$<)),wget -qO - -i $$(patsubst %.list,%.gpg.url,$$<)|apt-key add - > /dev/null)
 	apt-get update
 
 $(GRUNT_APT_PREF_DIR)/$(1).pref: $(1).pref
