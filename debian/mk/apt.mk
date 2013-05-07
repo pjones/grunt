@@ -10,7 +10,7 @@ VPATH = $(GRUNT_HOME)/debian/apt/$(GRUNT_DEBIAN_CODENAME)
 ################################################################################
 GRUNT_APT_DIR      = /etc/apt
 GRUNT_APT_PREF_DIR = $(GRUNT_APT_DIR)/preferences.d
-GRUNT_APT_LIST_DIR = $(GRUNT_APT_DIR)/apt/sources.list.d
+GRUNT_APT_LIST_DIR = $(GRUNT_APT_DIR)/sources.list.d
 
 ################################################################################
 # $1: The basename of the APT file (no extension)
@@ -28,7 +28,7 @@ endef
 
 ################################################################################
 # Automatically install any *.list files with their *.pref files.
-GRUNT_APT_LIST_FILES ?= $(subst .list,,$(ls *.list | grep -v sources.list))
+GRUNT_APT_LIST_FILES ?= $(subst .list,,$(shell ls *.list | grep -v sources.list))
 $(foreach l,$(GRUNT_APT_LIST_FILES),$(eval $(call GRUNT_INSTALL_APT_FILE,$(l))))
 
 ################################################################################
